@@ -1,0 +1,14 @@
+*~
+*.aux
+*.bak
+*.dvi
+*.eps
+*.fdb_latexmk
+*.fls
+*.gz
+*.lo?
+*.nav
+*.out
+*.pdf
+*.snm
+*.toc

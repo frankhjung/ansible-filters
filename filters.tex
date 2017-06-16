@@ -1,0 +1,92 @@
+\documentclass[pdf]{beamer}
+
+\mode<presentation>{
+  \usetheme{Singapore}          % others: default Singapore Warsaw
+  \usecolortheme{dolphin}       % beetle beaver orchid whale dolphin
+  \setbeamertemplate{sections/subsections in toc}[ball unnumbered]  % others: circle ball square
+	\usepackage{graphicx}
+	\graphicspath{ {figures/} }
+}
+
+% preamble
+\title{How do Jinja2 filters work?}
+\subtitle{a short introduction to ansible filters}
+\author{Frank Jung}
+\institute{frankhjung@linux.com}
+\date{\today}
+\logo{\includegraphics[height=1.5cm]{logos.png}}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage{}
+\end{frame}
+
+\begin{frame}{Contents}
+  \tableofcontents{}
+\end{frame}
+
+\begin{frame}{Topics}
+  Topics being covered are \ldots
+  \pause{}
+  \begin{itemize}
+    \item{} what are ansible filters?
+      \pause{}
+    \item{} what are pipes?
+      \pause{}
+    \item{} when documentation is not enough
+      \pause{}
+    \item{} when all else fails
+      \pause{}
+    \item{} should I roll my own?
+  \end{itemize}
+\end{frame}
+
+\section{What are Ansible Filters?}
+\begin{frame}{What are Ansible Filters?}
+  Filters are used to transform data.
+  \pause{}
+  \begin{itemize}
+    \item{} they can be used inside a template expression
+      \pause{}
+    \item{} they can be used to manipulate local data
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What are Ansible Filters?}
+	Filters are from a fast, flexible template engine, Jinja2\\
+	\begin{figure}[t]
+		\includegraphics[height=3.0cm]{jinja-logo.png}
+	\end{figure}
+  \pause{}
+	\textit{But ...}\\
+  \begin{itemize}
+		\item{} they are executed on the Ansible controller,\\
+			\textbf{not} on the task's target host
+      \pause{}
+  \end{itemize}
+\end{frame}
+
+% numbered points
+\section{Numbered Points}
+\begin{frame}{Numbered Points}
+  Numbered points
+  \begin{enumerate}
+    \item{} $1^{st}$ item
+    \item{} $2^{nd}$ item
+    \item{} $3^{rd}$ item
+  \end{enumerate}
+\end{frame}
+
+% bullet points
+\section{Bullet Points}
+\begin{frame}{Bullet Points}
+  Bullet points
+  \begin{itemize}
+    \item{} $1^{st}$ item
+    \item{} $2^{nd}$ item
+    \item{} $3^{rd}$ item
+  \end{itemize}
+\end{frame}
+
+\end{document}
