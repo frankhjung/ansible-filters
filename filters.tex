@@ -5,6 +5,7 @@
   \usecolortheme{dolphin}       % beetle beaver orchid whale dolphin
   \setbeamertemplate{sections/subsections in toc}[ball unnumbered]  % others: circle ball square
 	\usepackage{graphicx}
+  \usepackage{listings}
 	\graphicspath{ {figures/} }
 }
 
@@ -13,8 +14,16 @@
 \subtitle{a short introduction to ansible filters}
 \author{Frank Jung}
 \institute{frankhjung@linux.com}
-\date{\today}
-\logo{\includegraphics[height=1.5cm]{logos.png}}
+\date{ \today }
+\logo{ \includegraphics[height=1.5cm]{logos.png} }
+
+\lstset{
+  basicstyle=\tiny\color{blue},
+  frame=none,
+  tabsize=2,
+  showspaces=false,
+  showtabs=false
+}
 
 \begin{document}
 
@@ -22,81 +31,184 @@
   \titlepage{}
 \end{frame}
 
-\begin{frame}{Contents}
-  \tableofcontents{}
-\end{frame}
+% \begin{frame}{Contents}
+%   \tableofcontents{}
+% \end{frame}
 
-\begin{frame}{Topics}
+\begin{frame}
+  \frametitle{Topics}
   Topics being covered are \ldots
   \pause{}
   \begin{itemize}
-    \item{} what are ansible filters?
+    \item{what are Ansible filters?}
       \pause{}
-    \item{} what are pipes?
+    \item{when and where to use filters}
       \pause{}
-    \item{} when documentation is not enough
+    \item{when documentation is not enough}
       \pause{}
-    \item{} when all else fails
-      \pause{}
-    \item{} should I roll my own?
+    \item{should I roll my own?}
   \end{itemize}
 \end{frame}
 
 \section{What are Ansible Filters?}
-\begin{frame}{What are Ansible Filters?}
-  Filters are used to transform data:
-  \pause{}
-  \begin{enumerate}
-    \item{} they can be used inside a template expression
-    \pause{}
-    \item{} they can be used to manipulate local data
-  \end{enumerate}
-\end{frame}
 
-\begin{frame}{What are Ansible Filters?}
-  Filters are from a fast, flexible, Python template engine called ...
+\begin{frame}
+  \frametitle{What are Ansible Filters?}
+  Filters are from a fast, flexible, Python template engine called \ldots
   \pause{}
   \begin{center}
-    \textbf{Jinja2} \\
+    \textbf{Jinja2}
     \begin{figure}
-      \includegraphics{jinja-logo.png}
+      \includegraphics[width=0.5\textwidth]{jinja-logo.png}
     \end{figure}
     \href{http://jinja.pocoo.org}{jinja.pocoo.org}
   \end{center}
 \end{frame}
 
-\begin{frame}{What are Ansible Filters?}
-  Important features:
+\begin{frame}
+  \frametitle{What are Ansible Filters?}
+  Filters are used to transform data \ldots
+  \pause{}
   \begin{enumerate}
-    \item{} sand boxed \\
-    \pause{} - so can be used to evaluate untrusted code
-    \pause{}
-    \item{} they are executed on the Ansible controller \\
-    \pause{} - \textbf{not} on the task's target host
-		\item{} Ansible ships with its own filters \\
-    \pause{} - or use standard filters from Jinja2 \\
-    \pause{} - or write your own!
+    \item{they can be used inside a template expression}
+      \pause{}
+    \item{they can be used to manipulate local data}
   \end{enumerate}
 \end{frame}
 
-\section{What are pipes?}
-\begin{frame}{Numbered Points}
-  Focusing on how filters can be used to manipulate local data ...
+\begin{frame}
+  \frametitle{What are Ansible Filters?}
+  Important features \ldots
+  \pause{}
   \begin{enumerate}
-    \item{} $1^{st}$ item
-    \item{} $2^{nd}$ item
-    \item{} $3^{rd}$ item
+    \item{sand boxed}
+      \pause{}
+      \begin{itemize}
+        \item{so can be used to evaluate untrusted code}
+      \end{itemize}
+      \pause{}
+    \item{they are executed on the Ansible controller}
+      \pause{}
+      \begin{itemize}
+        \item{\textcolor{red}{\textbf{not}} on the task's target host}
+      \end{itemize}
+      \pause{}
+    \item{Ansible ships with its own filters}
+      \pause{}
+      \begin{itemize}
+        \item{or use standard filters from Jinja2}
+          \pause{}
+        \item{or write your own!}
+      \end{itemize}
   \end{enumerate}
 \end{frame}
 
-% bullet points
-\section{Bullet Points}
-\begin{frame}{Bullet Points}
-  Bullet points
+\section{Typical Use Cases}
+
+\begin{frame}[fragile]
+  \frametitle{Typical Filter Use Cases}
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  Use filters to manipulate local data \ldots
+  \begin{itemize}[<+->]
+    \item \alert<1>{create new facts}
+  \end{itemize}
+  \begin{lstlisting}
+  - name: count skills
+    set_fact:
+      skills_length: "{{ martin.skills | length }}"
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Typical Filter Use Cases}
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  Use filters to manipulate local data \ldots
   \begin{itemize}
-    \item{} $1^{st}$ item
-    \item{} $2^{nd}$ item
-    \item{} $3^{rd}$ item
+    \item {create new facts}
+    \item \alert<1>{subset or filter lists}
+  \end{itemize}
+  \begin{lstlisting}
+  - debug:
+      var: item
+    with_items: "{{ martin.skills }}"
+    when: item | match('p.*')
+
+  - debug:
+      var: item
+    with_items: "{{ martin.skills }}"
+    when: not item | match('perl') # same as item != 'perl'
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Typical Filter Use Cases}
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  Use filters to manipulate local data \ldots
+  \begin{itemize}
+    \item {create new facts}
+    \item {subset or filter lists}
+    \item \alert<1>{manipulate strings} 
+  \end{itemize}
+  \begin{lstlisting}
+  - debug:
+      msg: "{{ martin.job | lower }}"
+
+  - debug:
+      var: item
+    with_items: "{{ martin.name.split(' ') }}"
+
+  - name: capitalize skills
+    debug:
+      msg: "{{ item | capitalize }}"
+    with_items: "{{ martin.skills }}"
+  \end{lstlisting}
+\end{frame}
+
+\section{Debugging}
+
+\begin{frame}
+  \frametitle{When things go wrong \ldots}
+  \begin{itemize}
+    \item{debugging \ldots}
+  \end{itemize}
+\end{frame}
+
+\section{Roll Your Own}
+
+\begin{frame}
+  \frametitle{Writing your own filter \ldots}
+  \begin{itemize}
+    \item{\ldots}
+  \end{itemize}
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}
+  \frametitle{What we covered \ldots}
+    \pause{}
+  \begin{itemize}
+    \item{what filters are}
+      \pause{}
+    \item{typical places you will use them}
+      \pause{}
+    \item{getting help when things go wrong}
+      \pause{}
+    \item{writing your own filter}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{References}
+  \begin{itemize}
+    \item{ \href{https://www.ansible.com/}{www.ansible.com} }
+    \item{ \href{http://jinja.pocoo.org/}{jinja.pocoo.org} }
   \end{itemize}
 \end{frame}
 

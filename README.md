@@ -8,38 +8,46 @@ filters](http://docs.ansible.com/ansible/playbooks_filters.html).
 ## Topics
 
 - what are filters
-- piping
-- read the source
+- typical use cases
 - debugging
 - roll your own
 
-## Notes
+## Examples
 
-To create the logo montage I used the
-[ImageMagick](https://www.imagemagick.org/) command:
+Run filter examples using:
 
+```bash
+ansible-playbook examples.yaml
+ansible-playbook examples.yaml --list-tags
+ansible-playbook examples.yaml --tag create
+ansible-playbook examples.yaml --tag subset
+ansible-playbook examples.yaml --tag manipulate
 ```
-montage ansible-logo.png thelinuxfoundation-logo.png acm-logo.png themarlogroup-logo.png -geometry 48x48 logos.png
-```
 
-### Where do I use them?
+## Where do I use them?
 
 ```
   - name: set pages file permissions
     command: find "{{ ansible_user_dir }}/{{ wiki_dir }}/pages" -type f -exec chmod -c 0664 {} \;
     register: has_changed
     changed_when: not (has_changed.stdout | trim == '')
-
-
-
 ```
 
-* https://blog.codecentric.de/en/2014/08/jinja2-better-ansible-playbooks-templates/
-
-
-## References
+## Notes
 
 - [Ansible](http://docs.ansible.com/ansible/index.html)
 - [Ansible Filters](http://docs.ansible.com/ansible/playbooks_filters.html)
 - [Jinja2](http://jinja.pocoo.org/docs/2.9/api/)
+- [Jinja2 Better Ansible Playbooks Templates](https://blog.codecentric.de/en/2014/08/jinja2-better-ansible-playbooks-templates/)
+
+Presentation produced using Beamer LaTeX:
+
 - [Beamer](https://www.sharelatex.com/learn/Beamer)
+
+Logo created from montage of images in figures directory using
+[ImageMagick](https://www.imagemagick.org/):
+
+```bash
+montage ansible-logo.png thelinuxfoundation-logo.png acm-logo.png themarlogroup-logo.png -geometry 48x48 logos.png
+```
+

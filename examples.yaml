@@ -1,0 +1,97 @@
+---
+
+- name: ansible filter examples
+  hosts: localhost
+  vars:
+    martin:
+      name: Martin D'veloper
+      job: Developer
+      skills:
+        - ansible
+        - python
+        - perl
+        - ruby
+
+  tasks:
+
+    - name: show data structure
+      debug:
+        var: martin
+
+    - block:
+
+      - name: list skills
+        debug:
+          var: item
+        with_items: "{{ martin.skills }}"
+
+      - name: count skills
+        set_fact:
+          skills_length: "{{ martin.skills | length }}"
+
+      - name: show skills count
+        debug:
+          msg: "martin has {{ skills_length }} skills"
+
+      tags: create
+
+    - block:
+
+      - name: list skills
+        debug:
+          var: item
+        with_items: "{{ martin.skills }}"
+
+      - name: show skill starting with 'p'
+        debug:
+          var: item
+        with_items: "{{ martin.skills }}"
+        when: item | match('p.*')
+
+      - name: show skills except 'perl'
+        debug:
+          var: item
+        with_items: "{{ martin.skills }}"
+        when: not item | match('perl') # same as item != 'perl'
+
+      tags: subset
+
+    - block:
+
+      - name: show name
+        debug:
+          var: martin.name
+
+      - name: split name into a list
+        debug:
+          var: item
+        with_items: "{{ martin.name.split(' ') }}"
+
+      - name: show job
+        debug:
+          var: martin.job
+
+      - name: change job to lowercase
+        debug:
+          msg: "{{ martin.job | lower }}"
+
+      - name: list skills
+        debug:
+          var: item
+        with_items: "{{ martin.skills }}"
+
+      - name: capitalize skills
+        debug:
+          msg: "{{ item | capitalize }}"
+        with_items: "{{ martin.skills }}"
+
+      tags: manipulate
+
+    - block:
+
+      - name: write data structure to yaml
+        copy:
+          content: "{{ martin | to_nice_yaml(indent=4) }}"
+          dest: './martin.yaml'
+
+      tags: other
