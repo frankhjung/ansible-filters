@@ -44,33 +44,44 @@
 
 \section{What are Ansible Filters?}
 \begin{frame}{What are Ansible Filters?}
-  Filters are used to transform data.
+  Filters are used to transform data:
   \pause{}
-  \begin{itemize}
+  \begin{enumerate}
     \item{} they can be used inside a template expression
-      \pause{}
+    \pause{}
     \item{} they can be used to manipulate local data
-  \end{itemize}
+  \end{enumerate}
 \end{frame}
 
 \begin{frame}{What are Ansible Filters?}
-	Filters are from a fast, flexible template engine, Jinja2\\
-	\begin{figure}[t]
-		\includegraphics[height=3.0cm]{jinja-logo.png}
-	\end{figure}
+  Filters are from a fast, flexible, Python template engine called ...
   \pause{}
-	\textit{But ...}\\
-  \begin{itemize}
-		\item{} they are executed on the Ansible controller,\\
-			\textbf{not} on the task's target host
-      \pause{}
-  \end{itemize}
+  \begin{center}
+    \textbf{Jinja2} \\
+    \begin{figure}
+      \includegraphics{jinja-logo.png}
+    \end{figure}
+    \href{http://jinja.pocoo.org}{jinja.pocoo.org}
+  \end{center}
 \end{frame}
 
-% numbered points
-\section{Numbered Points}
+\begin{frame}{What are Ansible Filters?}
+  Important features:
+  \begin{enumerate}
+    \item{} sand boxed \\
+    \pause{} - so can be used to evaluate untrusted code
+    \pause{}
+    \item{} they are executed on the Ansible controller \\
+    \pause{} - \textbf{not} on the task's target host
+		\item{} Ansible ships with its own filters \\
+    \pause{} - or use standard filters from Jinja2 \\
+    \pause{} - or write your own!
+  \end{enumerate}
+\end{frame}
+
+\section{What are pipes?}
 \begin{frame}{Numbered Points}
-  Numbered points
+  Focusing on how filters can be used to manipulate local data ...
   \begin{enumerate}
     \item{} $1^{st}$ item
     \item{} $2^{nd}$ item

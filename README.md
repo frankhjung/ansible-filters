@@ -22,6 +22,21 @@ To create the logo montage I used the
 montage ansible-logo.png thelinuxfoundation-logo.png acm-logo.png themarlogroup-logo.png -geometry 48x48 logos.png
 ```
 
+### Where do I use them?
+
+```
+  - name: set pages file permissions
+    command: find "{{ ansible_user_dir }}/{{ wiki_dir }}/pages" -type f -exec chmod -c 0664 {} \;
+    register: has_changed
+    changed_when: not (has_changed.stdout | trim == '')
+
+
+
+```
+
+* https://blog.codecentric.de/en/2014/08/jinja2-better-ansible-playbooks-templates/
+
+
 ## References
 
 - [Ansible](http://docs.ansible.com/ansible/index.html)
