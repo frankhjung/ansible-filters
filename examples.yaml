@@ -80,6 +80,11 @@
           var: item
         with_items: "{{ martin.skills }}"
 
+      - name: sort skills
+        debug:
+          var: item
+        with_items: "{{ martin.skills | sort(reverse=True) }}"
+
       - name: capitalize skills
         debug:
           msg: "{{ item | capitalize }}"

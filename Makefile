@@ -19,4 +19,4 @@ clean:
 
 cleanall: clean
 	-latexmk -quiet -C $(TEXS)
-	@$(RM) *.nav *.snm *.vrb *~
+	@$(RM) *~ *.nav *.snm *.vrb *.retry

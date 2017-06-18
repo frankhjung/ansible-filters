@@ -5,8 +5,19 @@
   \usecolortheme{dolphin}       % beetle beaver orchid whale dolphin
   \setbeamertemplate{sections/subsections in toc}[ball unnumbered]  % others: circle ball square
 	\usepackage{graphicx}
+  \graphicspath{ {figures/} }
   \usepackage{listings}
-	\graphicspath{ {figures/} }
+  \lstset{
+    basicstyle=\tiny\color{blue},
+    frame=none,
+    tabsize=2,
+    showspaces=false,
+    showtabs=false
+  }
+  \hypersetup{
+    colorlinks=true,
+    allcolors=blue
+  }
 }
 
 % preamble
@@ -16,14 +27,6 @@
 \institute{frankhjung@linux.com}
 \date{ \today }
 \logo{ \includegraphics[height=1.5cm]{logos.png} }
-
-\lstset{
-  basicstyle=\tiny\color{blue},
-  frame=none,
-  tabsize=2,
-  showspaces=false,
-  showtabs=false
-}
 
 \begin{document}
 
@@ -37,16 +40,16 @@
 
 \begin{frame}
   \frametitle{Topics}
-  Topics being covered are \ldots
+  What we will cover \ldots
   \pause{}
   \begin{itemize}
-    \item{what are Ansible filters?}
+    \item what are Ansible filters?
       \pause{}
-    \item{when and where to use filters}
+    \item when and where to use filters
       \pause{}
-    \item{when documentation is not enough}
+    \item when documentation is not enough
       \pause{}
-    \item{should I roll my own?}
+    \item should I roll my own?
   \end{itemize}
 \end{frame}
 
@@ -57,9 +60,8 @@
   Filters are from a fast, flexible, Python template engine called \ldots
   \pause{}
   \begin{center}
-    \textbf{Jinja2}
     \begin{figure}
-      \includegraphics[width=0.5\textwidth]{jinja-logo.png}
+      \includegraphics[width=0.5\textwidth]{jinja.png}
     \end{figure}
     \href{http://jinja.pocoo.org}{jinja.pocoo.org}
   \end{center}
@@ -78,7 +80,7 @@
 
 \begin{frame}
   \frametitle{What are Ansible Filters?}
-  Important features \ldots
+  Some important features of filters \ldots
   \pause{}
   \begin{enumerate}
     \item{sand boxed}
@@ -153,7 +155,7 @@
   \begin{itemize}
     \item {create new facts}
     \item {subset or filter lists}
-    \item \alert<1>{manipulate strings} 
+    \item \alert<1>{manipulate strings}
   \end{itemize}
   \begin{lstlisting}
   - debug:
@@ -170,21 +172,97 @@
   \end{lstlisting}
 \end{frame}
 
-\section{Debugging}
+\section{Help}
 
-\begin{frame}
-  \frametitle{When things go wrong \ldots}
-  \begin{itemize}
-    \item{debugging \ldots}
-  \end{itemize}
+\begin{frame}[fragile]
+  \frametitle{Getting help when things go wrong}
+  New in Ansible 2.3 is \verb type_debug :
+  \begin{lstlisting}
+  - debug:
+    msg: "{{ martin | type_debug }}"
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Getting help when things go wrong}
+  Ansible Project - Google Groups
+  \begin{center}
+    \begin{figure}
+      \includegraphics[width=0.8\textwidth]{ansible-google-group.png}
+    \end{figure}
+  \end{center}
+  \tiny \url{https://groups.google.com/d/forum/ansible-project}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Getting help when things go wrong}
+  Read the source, for example Jinja has a sort method \ldots
+  \newline
+  \texttt{
+    \tiny \url{https://github.com/pallets/jinja/blob/master/jinja2/filters.py}
+  }
+  \begin{lstlisting}
+def do_sort(environment, value, reverse=False, case_sensitive=False, attribute=None):
+    """Sort an iterable.  Per default it sorts ascending, if you pass it
+    true as first argument it will reverse the sorting.
+...
+  \end{lstlisting}
+  \pause{}
+  \begin{lstlisting}
+FILTERS = {
+  'abs':                  abs,
+  'attr':                 do_attr, 
+...
+  'sort':                 do_sort,
+...
+}
+  \end{lstlisting}
+  \pause{}
+  Which gives a hint on how to use this method:
+  \begin{lstlisting}
+  - name: sort skills
+    debug:
+      var: item
+    with_items: "{{ martin.skills | sort(reverse=True) }}"
+  \end{lstlisting}
 \end{frame}
 
 \section{Roll Your Own}
 
 \begin{frame}
-  \frametitle{Writing your own filter \ldots}
+  \frametitle{Writing your own filter}
+  You may think to start here \ldots
   \begin{itemize}
-    \item{\ldots}
+    \item \small \url{http://docs.ansible.com/ansible/dev_guide/developing_plugins.html}
+  \end{itemize}
+  \pause{}
+  But, that only redirects you to
+  \href{https://github.com/ansible/ansible/blob/devel/lib/ansible/plugins/filter/core.py}{lib/ansible/plugins/filter} \ldots
+\end{frame}
+
+\begin{frame}
+  \frametitle{Writing your own filter}
+  Better, \href{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}{Enhance your Ansible playbooks with custom Jinja2 filters}
+  \begin{itemize}
+    \item \small \url{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Writing your own filter}
+  To create a custom filter the steps are simple \ldots
+  \begin{itemize}
+    \item write a test for your plugin
+      \pause{}
+    \item create a directory \texttt{filter\_plugins}
+      \pause{}
+    \item add a template file \texttt{collection.py} to this directory
+      \pause{}
+    \item define your method
+      \pause{}
+    \item add method to \texttt{FilterModule} class that implements \texttt{filters} method
+      \pause{}
+    \item re-test
   \end{itemize}
 \end{frame}
 
@@ -207,8 +285,22 @@
 \begin{frame}
   \frametitle{References}
   \begin{itemize}
-    \item{ \href{https://www.ansible.com/}{www.ansible.com} }
-    \item{ \href{http://jinja.pocoo.org/}{jinja.pocoo.org} }
+    \item
+      \href{https://www.ansible.com/}{www.ansible.com}
+      \begin{itemize}
+        \item \href{http://docs.ansible.com/ansible/playbooks_filters.html}{filters}
+        \item \href{https://github.com/ansible/ansible}{github}
+      \end{itemize}
+    \item
+      \href{https://groups.google.com/d/forum/ansible-project}{Ansible Project - Google Groups}
+    \item
+      \href{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}{Enhance your Ansible playbooks with custom Jinja2 filters}
+    \item
+      \href{http://jinja.pocoo.org/}{jinja.pocoo.org}
+      \begin{itemize}
+        \item \href{http://jinja.pocoo.org/docs/2.9/templates}{filters}
+        \item \href{https://github.com/pallets/jinja}{github}
+      \end{itemize}
   \end{itemize}
 \end{frame}
 
