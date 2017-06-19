@@ -10,6 +10,7 @@
 *.nav
 *.out
 *.pdf
+*.pyc
 *.retry
 *.snm
 *.toc

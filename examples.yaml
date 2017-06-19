@@ -18,6 +18,7 @@
       debug:
         var: martin
 
+    # create
     - block:
 
       - name: list skills
@@ -35,6 +36,7 @@
 
       tags: create
 
+    # subset
     - block:
 
       - name: list skills
@@ -56,6 +58,7 @@
 
       tags: subset
 
+    # manipulate
     - block:
 
       - name: show name
@@ -92,6 +95,7 @@
 
       tags: manipulate
 
+    # other
     - block:
 
       - name: write data structure to yaml
@@ -100,3 +104,17 @@
           dest: './martin.yaml'
 
       tags: other
+
+    # test filter plugin
+    - block:
+
+      - name: count number of occurrences of 'r' in name
+        set_fact:
+          counter: "{{ martin.name | count('r') }}"
+
+      - name: test there are exactly 2 occurrences
+        debug:
+          var: counter
+        failed_when: counter | int != 2
+
+      tags: test

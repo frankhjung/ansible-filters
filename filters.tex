@@ -8,7 +8,7 @@
   \graphicspath{ {figures/} }
   \usepackage{listings}
   \lstset{
-    basicstyle=\tiny\color{blue},
+    basicstyle=\ttfamily\tiny\color{blue},
     frame=none,
     tabsize=2,
     showspaces=false,
@@ -43,13 +43,10 @@
   What we will cover \ldots
   \pause{}
   \begin{itemize}
-    \item what are Ansible filters?
-      \pause{}
-    \item when and where to use filters
-      \pause{}
-    \item when documentation is not enough
-      \pause{}
-    \item should I roll my own?
+    \item<+-> what are Ansible filters?
+    \item<+-> when and where to use filters
+    \item<+-> when documentation is not enough
+    \item<+-> should I roll my own?
   \end{itemize}
 \end{frame}
 
@@ -72,9 +69,8 @@
   Filters are used to transform data \ldots
   \pause{}
   \begin{enumerate}
-    \item{they can be used inside a template expression}
-      \pause{}
-    \item{they can be used to manipulate local data}
+    \item<+->{they can be used inside a template expression}
+    \item<+->{they can be used to manipulate local data}
   \end{enumerate}
 \end{frame}
 
@@ -83,24 +79,18 @@
   Some important features of filters \ldots
   \pause{}
   \begin{enumerate}
-    \item{sand boxed}
-      \pause{}
+    \item<+->{sand boxed}
       \begin{itemize}
-        \item{so can be used to evaluate untrusted code}
+        \item<+->{so can be used to evaluate untrusted code}
       \end{itemize}
-      \pause{}
-    \item{they are executed on the Ansible controller}
-      \pause{}
+    \item<+->{they are executed on the Ansible controller}
       \begin{itemize}
-        \item{\textcolor{red}{\textbf{not}} on the task's target host}
+        \item<+->{\textcolor{red}{\textbf{not}} on the task's target host}
       \end{itemize}
-      \pause{}
-    \item{Ansible ships with its own filters}
-      \pause{}
+    \item<+->{Ansible ships with its own filters}
       \begin{itemize}
-        \item{or use standard filters from Jinja2}
-          \pause{}
-        \item{or write your own!}
+        \item<+->{or use standard filters from Jinja2}
+        \item<+->{or write your own!}
       \end{itemize}
   \end{enumerate}
 \end{frame}
@@ -114,7 +104,7 @@
   \usebeamercolor{normal text}
   Use filters to manipulate local data \ldots
   \begin{itemize}[<+->]
-    \item \alert<1>{create new facts}
+    \item \alert {create new facts}
   \end{itemize}
   \begin{lstlisting}
   - name: count skills
@@ -131,7 +121,7 @@
   Use filters to manipulate local data \ldots
   \begin{itemize}
     \item {create new facts}
-    \item \alert<1>{subset or filter lists}
+    \item \alert {subset or filter lists}
   \end{itemize}
   \begin{lstlisting}
   - debug:
@@ -155,7 +145,7 @@
   \begin{itemize}
     \item {create new facts}
     \item {subset or filter lists}
-    \item \alert<1>{manipulate strings}
+    \item \alert {manipulate strings}
   \end{itemize}
   \begin{lstlisting}
   - debug:
@@ -196,8 +186,7 @@
 
 \begin{frame}[fragile]
   \frametitle{Getting help when things go wrong}
-  Read the source, for example Jinja has a sort method \ldots
-  \newline
+  Read the source, for example Jinja has a sort method \ldots \newline
   \texttt{
     \tiny \url{https://github.com/pallets/jinja/blob/master/jinja2/filters.py}
   }
@@ -207,7 +196,7 @@ def do_sort(environment, value, reverse=False, case_sensitive=False, attribute=N
     true as first argument it will reverse the sorting.
 ...
   \end{lstlisting}
-  \pause{}
+  Where \texttt{do\_sort} maps to \ldots \pause{} sort
   \begin{lstlisting}
 FILTERS = {
   'abs':                  abs,
@@ -231,38 +220,54 @@ FILTERS = {
 
 \begin{frame}
   \frametitle{Writing your own filter}
-  You may think to start here \ldots
-  \begin{itemize}
-    \item \small \url{http://docs.ansible.com/ansible/dev_guide/developing_plugins.html}
+  \begin{itemize}[<+->]
+    \item[] You may think to start here \ldots
+      \begin{itemize}
+        \item<1-> \small \url{http://docs.ansible.com/ansible/dev_guide/developing_plugins.html}
+      \end{itemize}
+    \item[] But, that only redirects you to \href{https://github.com/ansible/ansible/blob/devel/lib/ansible/plugins/filter/core.py}{lib/ansible/plugins/filter} \ldots
+    \item[] A better place to start is \ldots
+      \begin{itemize}
+        \item
+          \href{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}{Enhance
+          your Ansible playbooks with custom Jinja2 filters} \newline
+        \small \url{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}
+      \end{itemize}
+    \item[] Let's go through an example in detail \ldots
   \end{itemize}
-  \pause{}
-  But, that only redirects you to
-  \href{https://github.com/ansible/ansible/blob/devel/lib/ansible/plugins/filter/core.py}{lib/ansible/plugins/filter} \ldots
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Writing your own filter}
-  Better, \href{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}{Enhance your Ansible playbooks with custom Jinja2 filters}
-  \begin{itemize}
-    \item \small \url{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Writing your own filter}
-  To create a custom filter the steps are simple \ldots
-  \begin{itemize}
-    \item write a test for your plugin
-      \pause{}
-    \item create a directory \texttt{filter\_plugins}
-      \pause{}
-    \item add a template file \texttt{collection.py} to this directory
-      \pause{}
-    \item define your method
-      \pause{}
-    \item add method to \texttt{FilterModule} class that implements \texttt{filters} method
-      \pause{}
-    \item re-test
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  To create a custom filter the steps are \ldots
+  \begin{itemize}[<+->]
+    \item \alert<1>{write a test for your plugin}
+      \begin{lstlisting}
+- name: count number of occurrences of 'r' in name
+  set_fact: counter="{{ martin.name | count('r') }}"
+- name: test there are exactly 2 occurrences
+  debug: var=counter
+  failed_when: counter | int != 2
+      \end{lstlisting}
+    \item \alert<2>{create a directory \texttt{filter\_plugins}}
+    \item \alert<3>{add python script to this directory, and to this script \ldots}
+    \item[] \alert<4>{add method implenting filter}
+      \begin{lstlisting}
+def count(word, char):
+  ''' Count occurences of character in string. '''
+  return word.count(char)
+      \end{lstlisting}
+    \item[] \alert<5>{add class to \texttt{FilterModule} that implements \texttt{filters} method}
+      \begin{lstlisting}
+class FilterModule(object):
+  ''' Custom jinja2 filter for working with collections. '''
+  def filters(self):
+      return {'count': count}
+      \end{lstlisting}
+    \item \alert<6>{re-test}
   \end{itemize}
 \end{frame}
 
