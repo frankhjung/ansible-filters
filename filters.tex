@@ -14,6 +14,7 @@
     showspaces=false,
     showtabs=false
   }
+  \usepackage{array}
   \hypersetup{
     colorlinks=true,
     allcolors=blue
@@ -21,8 +22,8 @@
 }
 
 % preamble
-\title{How do Jinja2 filters work?}
-\subtitle{a short introduction to ansible filters}
+\title{Ansible Filters}
+\subtitle{a short introduction}
 \author{Frank Jung}
 \institute{frankhjung@linux.com}
 \date{ \today }
@@ -103,6 +104,7 @@
   \setbeamercolor{alerted text}{fg=blue}
   \usebeamercolor{normal text}
   Use filters to manipulate local data \ldots
+  \pause{}
   \begin{itemize}[<+->]
     \item \alert {create new facts}
   \end{itemize}
@@ -200,7 +202,7 @@ def do_sort(environment, value, reverse=False, case_sensitive=False, attribute=N
   \begin{lstlisting}
 FILTERS = {
   'abs':                  abs,
-  'attr':                 do_attr, 
+  'attr':                 do_attr,
 ...
   'sort':                 do_sort,
 ...
@@ -276,13 +278,10 @@ class FilterModule(object):
 \begin{frame}
   \frametitle{What we covered \ldots}
     \pause{}
-  \begin{itemize}
+  \begin{itemize}[<+->]
     \item{what filters are}
-      \pause{}
     \item{typical places you will use them}
-      \pause{}
     \item{getting help when things go wrong}
-      \pause{}
     \item{writing your own filter}
   \end{itemize}
 \end{frame}
@@ -290,6 +289,11 @@ class FilterModule(object):
 \begin{frame}
   \frametitle{References}
   \begin{itemize}
+    \item
+      Presentation and sample code
+      \begin{itemize}
+        \item \url{https://github.com/frankhjung/ansible-filters}
+      \end{itemize}
     \item
       \href{https://www.ansible.com/}{www.ansible.com}
       \begin{itemize}
@@ -299,14 +303,24 @@ class FilterModule(object):
     \item
       \href{https://groups.google.com/d/forum/ansible-project}{Ansible Project - Google Groups}
     \item
-      \href{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}{Enhance your Ansible playbooks with custom Jinja2 filters}
-    \item
       \href{http://jinja.pocoo.org/}{jinja.pocoo.org}
       \begin{itemize}
         \item \href{http://jinja.pocoo.org/docs/2.9/templates}{filters}
         \item \href{https://github.com/pallets/jinja}{github}
       \end{itemize}
+    \item
+      \href{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}{Enhance your Ansible playbooks with custom Jinja2 filters}
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Addendum}
+  \begin{tabular}{ m{1cm} m{6cm} }
+    \includegraphics[width=1.0cm]{ansible-logo.png} & Ansible \\
+    \includegraphics[width=1.0cm]{acm-logo.png} & Association for Computing Machinery \\
+    \includegraphics[width=1.0cm]{thelinuxfoundation-logo.png} & The Linux Foundation \\
+    \includegraphics[width=1.0cm]{themarlogroup-logo.png} & The Marlo Group
+  \end{tabular}
 \end{frame}
 
 \end{document}
