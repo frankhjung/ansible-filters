@@ -8,8 +8,9 @@
   \graphicspath{ {figures/} }
   \usepackage{listings}
   \lstset{
-    basicstyle=\ttfamily\tiny\color{blue},
+    basicstyle=\scriptsize\color{blue},
     frame=none,
+    columns=l,
     tabsize=2,
     showspaces=false,
     showtabs=false
@@ -45,9 +46,9 @@
   \pause{}
   \begin{itemize}
     \item<+-> what are Ansible filters?
-    \item<+-> when and where to use filters
-    \item<+-> when documentation is not enough
-    \item<+-> should I roll my own?
+    \item<+-> some typical use cases
+    \item<+-> getting help
+    \item<+-> how to roll my own?
   \end{itemize}
 \end{frame}
 
@@ -69,9 +70,11 @@
   \frametitle{What are Ansible Filters?}
   Filters are used to transform data \ldots
   \pause{}
+  \setbeamercolor{alerted text}{fg=blue}
   \begin{enumerate}
-    \item<+->{they can be used inside a template expression}
-    \item<+->{they can be used to manipulate local data}
+    \item<+-> {they can be used inside a template expression}
+    \item<+-|alert@+(1)> {they can be used to manipulate local data}
+    \item[]
   \end{enumerate}
 \end{frame}
 
@@ -98,24 +101,23 @@
 
 \section{Typical Use Cases}
 
-\begin{frame}[fragile]
+\begin{frame}[t,fragile]
   \frametitle{Typical Filter Use Cases}
   \setbeamercolor{normal text}{fg=gray}
   \setbeamercolor{alerted text}{fg=blue}
   \usebeamercolor{normal text}
   Use filters to manipulate local data \ldots
-  \pause{}
-  \begin{itemize}[<+->]
+  \begin{itemize}
     \item \alert {create new facts}
   \end{itemize}
   \begin{lstlisting}
-  - name: count skills
-    set_fact:
-      skills_length: "{{ martin.skills | length }}"
+    - name: count skills
+      set_fact:
+        skills_length: "{{ martin.skills | length }}"
   \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[t,fragile]
   \frametitle{Typical Filter Use Cases}
   \setbeamercolor{normal text}{fg=gray}
   \setbeamercolor{alerted text}{fg=blue}
@@ -126,19 +128,19 @@
     \item \alert {subset or filter lists}
   \end{itemize}
   \begin{lstlisting}
-  - debug:
-      var: item
-    with_items: "{{ martin.skills }}"
-    when: item | match('p.*')
+    - debug:
+        var: item
+      with_items: "{{ martin.skills }}"
+      when: item | match('p.*')
 
-  - debug:
-      var: item
-    with_items: "{{ martin.skills }}"
-    when: not item | match('perl') # same as item != 'perl'
+    - debug:
+        var: item
+      with_items: "{{ martin.skills }}"
+      when: not item | match('perl')
   \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[t,fragile]
   \frametitle{Typical Filter Use Cases}
   \setbeamercolor{normal text}{fg=gray}
   \setbeamercolor{alerted text}{fg=blue}
@@ -150,17 +152,17 @@
     \item \alert {manipulate strings}
   \end{itemize}
   \begin{lstlisting}
-  - debug:
-      msg: "{{ martin.job | lower }}"
+    - debug:
+        msg: "{{ martin.job | lower }}"
 
-  - debug:
-      var: item
-    with_items: "{{ martin.name.split(' ') }}"
+    - debug:
+        var: item
+      with_items: "{{ martin.name.split(' ') }}"
 
-  - name: capitalize skills
-    debug:
-      msg: "{{ item | capitalize }}"
-    with_items: "{{ martin.skills }}"
+    - name: capitalize skills
+      debug:
+        msg: "{{ item | capitalize }}"
+      with_items: "{{ martin.skills }}"
   \end{lstlisting}
 \end{frame}
 
@@ -170,8 +172,17 @@
   \frametitle{Getting help when things go wrong}
   New in Ansible 2.3 is \verb type_debug :
   \begin{lstlisting}
-  - debug:
+- name: type_debug var
+  debug:
     msg: "{{ martin | type_debug }}"
+  \end{lstlisting}
+  \pause{}
+  Gives variable type information \dots
+  \begin{lstlisting}
+TASK [type_debug var] *************************
+ok: [localhost] => {
+    "msg": "dict"
+}
   \end{lstlisting}
 \end{frame}
 
@@ -186,35 +197,34 @@
   \tiny \url{https://groups.google.com/d/forum/ansible-project}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[t,fragile]
   \frametitle{Getting help when things go wrong}
-  Read the source, for example Jinja has a sort method \ldots \newline
-  \texttt{
-    \tiny \url{https://github.com/pallets/jinja/blob/master/jinja2/filters.py}
-  }
-  \begin{lstlisting}
-def do_sort(environment, value, reverse=False, case_sensitive=False, attribute=None):
-    """Sort an iterable.  Per default it sorts ascending, if you pass it
-    true as first argument it will reverse the sorting.
-...
+  Read the source, for example Jinja has a sort method:
+  \begin{lstlisting}[title=\tiny\url{https://github.com/pallets/jinja/blob/master/jinja2/filters.py},
+  captionpos=b]
+def do_sort(environment, value, reverse=False,
+            case_sensitive=False, attribute=None):
+    """Sort an iterable.  Per default it sorts ascending,
+    if you pass it true as first argument it will reverse
+    the sorting.
+    ...
   \end{lstlisting}
-  Where \texttt{do\_sort} maps to \ldots \pause{} sort
+  \pause{}
+  Where \texttt{do\_sort} maps to \ldots \pause{} \textit{sort}:
   \begin{lstlisting}
 FILTERS = {
-  'abs':                  abs,
-  'attr':                 do_attr,
-...
-  'sort':                 do_sort,
-...
+  ...
+    'sort':                 do_sort,
+  ...
 }
   \end{lstlisting}
   \pause{}
   Which gives a hint on how to use this method:
   \begin{lstlisting}
-  - name: sort skills
-    debug:
-      var: item
-    with_items: "{{ martin.skills | sort(reverse=True) }}"
+- name: sort skills
+  debug:
+    var: item
+  with_items: "{{ martin.skills | sort(reverse=True) }}"
   \end{lstlisting}
 \end{frame}
 
@@ -225,9 +235,12 @@ FILTERS = {
   \begin{itemize}[<+->]
     \item[] You may think to start here \ldots
       \begin{itemize}
-        \item<1-> \small \url{http://docs.ansible.com/ansible/dev_guide/developing_plugins.html}
+        \item<1->
+          \small \url{http://docs.ansible.com/ansible/dev_guide/developing_plugins.html}
       \end{itemize}
-    \item[] But, that only redirects you to \href{https://github.com/ansible/ansible/blob/devel/lib/ansible/plugins/filter/core.py}{lib/ansible/plugins/filter} \ldots
+    \item[]
+      But, that only redirects you to
+      \href{https://github.com/ansible/ansible/blob/devel/lib/ansible/plugins/filter/core.py}{lib/ansible/plugins/filter} \ldots
     \item[] A better place to start is \ldots
       \begin{itemize}
         \item
@@ -239,37 +252,149 @@ FILTERS = {
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[t,fragile]
   \frametitle{Writing your own filter}
+  To create a custom filter the steps are \ldots
+  \begin{itemize}[<+->]
+    \item {write a test for your plugin}
+    \item {create a directory called \color{blue}{\texttt{filter\_plugins}}}
+    \item {add a Python script into this directory, to this script \ldots}
+      \begin{itemize}
+        \item {add a function implementing your filter}
+        \item {implement class \textcolor{blue}{\texttt{FilterModule}} overriding \textcolor{blue}{\texttt{filters}} method}
+      \end{itemize}
+    \item {run test on your new filter}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Writing your own filter}
+  Writing a custom filter in detail \ldots
   \setbeamercolor{normal text}{fg=gray}
   \setbeamercolor{alerted text}{fg=blue}
   \usebeamercolor{normal text}
-  To create a custom filter the steps are \ldots
-  \begin{itemize}[<+->]
-    \item \alert<1>{write a test for your plugin}
+  \begin{itemize}
+    \item \alert {write a test for your plugin \texttt{example.yaml}}
       \begin{lstlisting}
 - name: count number of occurrences of 'r' in name
   set_fact: counter="{{ martin.name | count('r') }}"
+
 - name: test there are exactly 2 occurrences
   debug: var=counter
   failed_when: counter | int != 2
       \end{lstlisting}
-    \item \alert<2>{create a directory \texttt{filter\_plugins}}
-    \item \alert<3>{add python script to this directory, and to this script \ldots}
-    \item[] \alert<4>{add method implenting filter}
+    \item {create a directory called \texttt{filter\_plugins}}
+    \item {add a Python script into this directory, to this script \ldots}
+      \begin{itemize}
+        \item {add a function implementing your filter}
+        \item {implement class \texttt{FilterModule} overriding \texttt{filters} method}
+      \end{itemize}
+    \item {run test on your new filter}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Writing your own filter}
+  Writing a custom filter in detail \ldots
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  \begin{itemize}
+    \item {write a test for your plugin}
+    \item \alert {create a directory called \texttt{filter\_plugins}}
       \begin{lstlisting}
-def count(word, char):
-  ''' Count occurences of character in string. '''
-  return word.count(char)
+mkdir filter_plugins
       \end{lstlisting}
-    \item[] \alert<5>{add class to \texttt{FilterModule} that implements \texttt{filters} method}
+    \item {add a Python script into this directory, to this script \ldots}
+      \begin{itemize}
+        \item {add a function implementing your filter}
+        \item {implement class \texttt{FilterModule} overriding \texttt{filters} method}
+      \end{itemize}
+    \item {run test on your new filter}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Writing your own filter}
+  Writing a custom filter in detail \ldots
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  \begin{itemize}
+    \item {write a test for your plugin}
+    \item {create a directory called \texttt{filter\_plugins}}
+    \item \alert {add a Python script into this directory \ldots}
       \begin{lstlisting}
+touch filter_plugins/custom.py
+      \end{lstlisting}
+      \begin{itemize}
+        \item {add a function implementing your filter}
+        \item {implement class \texttt{FilterModule} overriding \texttt{filters} method}
+      \end{itemize}
+    \item {run test on your new filter}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Writing your own filter}
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  Writing a custom filter in detail \ldots
+  \begin{itemize}
+    \item {write a test for your plugin}
+    \item {create a directory called \texttt{filter\_plugins}}
+    \item {add a Python script into this directory, to this script \ldots}
+      \begin{itemize}
+        \item \alert {add a function implementing your filter}
+          \begin{lstlisting}
+def count(word, char):
+  return word.count(char)
+          \end{lstlisting}
+        \item {implement class \texttt{FilterModule} overriding \texttt{filters} method}
+      \end{itemize}
+    \item {run test on your new filter}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Writing your own filter}
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  Writing a custom filter in detail \ldots
+  \begin{itemize}
+    \item {write a test for your plugin}
+    \item {create a directory called \texttt{filter\_plugins}}
+    \item {add a Python script into this directory, to this script \ldots}
+      \begin{itemize}
+        \item {add a function implementing your filter}
+        \item \alert {implement class \texttt{FilterModule} overriding \texttt{filters} method}
+          \begin{lstlisting}
 class FilterModule(object):
-  ''' Custom jinja2 filter for working with collections. '''
   def filters(self):
       return {'count': count}
-      \end{lstlisting}
-    \item \alert<6>{re-test}
+          \end{lstlisting}
+      \end{itemize}
+    \item {run test on your new filter}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Writing your own filter}
+  \setbeamercolor{normal text}{fg=gray}
+  \setbeamercolor{alerted text}{fg=blue}
+  \usebeamercolor{normal text}
+  Writing a custom filter in detail \ldots
+  \begin{itemize}
+    \item {write a test for your plugin}
+    \item {create a directory called \texttt{filter\_plugins}}
+    \item {add a Python script into this directory, to this script \ldots}
+      \begin{itemize}
+        \item {add a function implementing your filter}
+        \item {implement class \texttt{FilterModule} overriding \texttt{filters} method}
+      \end{itemize}
+    \item \alert {run test on your new filter}
   \end{itemize}
 \end{frame}
 
@@ -290,7 +415,7 @@ class FilterModule(object):
   \frametitle{References}
   \begin{itemize}
     \item
-      Presentation and sample code
+      \href{https://github.com/frankhjung/ansible-filters}{Presentation and sample code}
       \begin{itemize}
         \item \url{https://github.com/frankhjung/ansible-filters}
       \end{itemize}
@@ -298,7 +423,7 @@ class FilterModule(object):
       \href{https://www.ansible.com/}{www.ansible.com}
       \begin{itemize}
         \item \href{http://docs.ansible.com/ansible/playbooks_filters.html}{filters}
-        \item \href{https://github.com/ansible/ansible}{github}
+        \item \href{https://github.com/ansible/ansible}{github} - \url{https://github.com/ansible/ansible}
       \end{itemize}
     \item
       \href{https://groups.google.com/d/forum/ansible-project}{Ansible Project - Google Groups}
@@ -306,10 +431,13 @@ class FilterModule(object):
       \href{http://jinja.pocoo.org/}{jinja.pocoo.org}
       \begin{itemize}
         \item \href{http://jinja.pocoo.org/docs/2.9/templates}{filters}
-        \item \href{https://github.com/pallets/jinja}{github}
+        \item \href{https://github.com/pallets/jinja}{github} - \url{https://github.com/pallets/jinja}
       \end{itemize}
     \item
       \href{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}{Enhance your Ansible playbooks with custom Jinja2 filters}
+      \begin{itemize}
+        \item \url{https://opensolitude.com/2016/05/21/ansible-jinja2-filter-plugins.html}
+      \end{itemize}
   \end{itemize}
 \end{frame}
 

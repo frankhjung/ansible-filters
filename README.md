@@ -13,6 +13,8 @@ ansible-playbook examples.yaml --list-tags
 ansible-playbook examples.yaml --tag create
 ansible-playbook examples.yaml --tag subset
 ansible-playbook examples.yaml --tag manipulate
+ansible-playbook examples.yaml --tag other
+ansible-playbook examples.yaml --tag regex
 
 ansible-playbook examples.yaml --tag test
 ```
@@ -27,6 +29,7 @@ ansible-playbook examples.yaml --tag test
 Presentation produced using Beamer LaTeX:
 
 - [Beamer](https://www.sharelatex.com/learn/Beamer)
+- [Transitions](https://math-linux.com/latex-26/article/how-to-make-a-presentation-with-latex-introduction-to-beamer)
 
 - Logo created from montage of images in figures directory using [ImageMagick](https://www.imagemagick.org/):
 ```bash

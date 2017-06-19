@@ -11,12 +11,17 @@
         - python
         - perl
         - ruby
+      url: https://github.com/frankhjung/ansible-filters
 
   tasks:
 
-    - name: show data structure
-      debug:
-        var: martin
+    - block:
+
+      - name: show data structure
+        debug:
+          var: martin
+
+      tags: always
 
     # create
     - block:
@@ -94,6 +99,19 @@
         with_items: "{{ martin.skills }}"
 
       tags: manipulate
+
+    # regex
+    - block:
+
+        - name: search using regex named group
+          debug:
+            msg: "{{ martin.url | regex_replace('.*/(?P<war>.+)$', '\\g<war>') }}"
+
+        - name: search using regex numbered group
+          debug:
+            msg: "{{ martin.url | regex_replace('.*/(.+)$', '\\1') }}"
+
+      tags: regex
 
     # other
     - block:
