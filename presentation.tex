@@ -20,6 +20,7 @@
     colorlinks=true,
     allcolors=blue
   }
+  \usepackage[edges]{forest}
 }
 
 % preamble
@@ -103,67 +104,15 @@
 
 \begin{frame}[t,fragile]
   \frametitle{Typical Filter Use Cases}
-  \setbeamercolor{normal text}{fg=gray}
-  \setbeamercolor{alerted text}{fg=blue}
-  \usebeamercolor{normal text}
-  Use filters to manipulate local data \ldots
-  \begin{itemize}
-    \item \alert {create new facts}
-  \end{itemize}
-  \begin{lstlisting}
-    - name: count skills
-      set_fact:
-        skills_length: "{{ martin.skills | length }}"
-  \end{lstlisting}
-\end{frame}
-
-\begin{frame}[t,fragile]
-  \frametitle{Typical Filter Use Cases}
-  \setbeamercolor{normal text}{fg=gray}
-  \setbeamercolor{alerted text}{fg=blue}
-  \usebeamercolor{normal text}
-  Use filters to manipulate local data \ldots
-  \begin{itemize}
-    \item {create new facts}
-    \item \alert {subset or filter lists}
-  \end{itemize}
-  \begin{lstlisting}
-    - debug:
-        var: item
-      with_items: "{{ martin.skills }}"
-      when: item | match('p.*')
-
-    - debug:
-        var: item
-      with_items: "{{ martin.skills }}"
-      when: not item | match('perl')
-  \end{lstlisting}
-\end{frame}
-
-\begin{frame}[t,fragile]
-  \frametitle{Typical Filter Use Cases}
-  \setbeamercolor{normal text}{fg=gray}
-  \setbeamercolor{alerted text}{fg=blue}
-  \usebeamercolor{normal text}
-  Use filters to manipulate local data \ldots
-  \begin{itemize}
-    \item {create new facts}
-    \item {subset or filter lists}
-    \item \alert {manipulate strings}
-  \end{itemize}
-  \begin{lstlisting}
-    - debug:
-        msg: "{{ martin.job | lower }}"
-
-    - debug:
-        var: item
-      with_items: "{{ martin.name.split(' ') }}"
-
-    - name: capitalize skills
-      debug:
-        msg: "{{ item | capitalize }}"
-      with_items: "{{ martin.skills }}"
-  \end{lstlisting}
+  \only<1-> {Use filters to manipulate local data \ldots \newline}
+  \only<2>  {\-\ \color{blue}{\small$\bullet$} create new facts}
+  \only<2>  {\lstinputlisting[firstline=34,lastline=36]{filter-examples.yaml}}
+  \only<3-> {\-\ \small{\color{blue}$\bullet$} create new facts \newline}
+  \only<3>  {\-\ \color{blue}{\small$\bullet$} subset or filter lists}
+  \only<3>  {\lstinputlisting[firstline=52,lastline=62]{filter-examples.yaml}}
+  \only<4-> {\-\ \small{\color{blue}$\bullet$} subset or filter lists \newline}
+  \only<4>  {\-\ \color{blue}{\small$\bullet$} manipulate strings}
+  \only<4>  {\lstinputlisting[firstline=87,lastline=99]{filter-examples.yaml}}
 \end{frame}
 
 \section{Help}
@@ -200,8 +149,7 @@ ok: [localhost] => {
 \begin{frame}[t,fragile]
   \frametitle{Getting help when things go wrong}
   Read the source, for example Jinja has a sort method:
-  \begin{lstlisting}[title=\tiny\url{https://github.com/pallets/jinja/blob/master/jinja2/filters.py},
-  captionpos=b]
+  \begin{lstlisting}[title=\tiny\url{https://github.com/pallets/jinja/blob/master/jinja2/filters.py}, captionpos=b]
 def do_sort(environment, value, reverse=False,
             case_sensitive=False, attribute=None):
     """Sort an iterable.  Per default it sorts ascending,
@@ -378,6 +326,30 @@ class FilterModule(object):
       \end{itemize}
     \item {run test on your new filter}
   \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Writing your own filter}
+  Resulting Ansible project structure \ldots
+  \color{blue}
+  \begin{center}
+    \begin{forest}
+      for tree={%
+        folder,
+        grow'=0,
+        fit=band,
+      }
+      [.
+        [ansible.cfg]
+        [filter-examples.yaml]
+        [filter\_plugins
+          [custom.py]
+        ]
+        [hosts]
+        [README.md]
+      ]
+    \end{forest}
+  \end{center}
 \end{frame}
 
 \begin{frame}[t,fragile]

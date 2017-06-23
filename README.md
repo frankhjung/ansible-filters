@@ -8,15 +8,15 @@ filters](http://docs.ansible.com/ansible/playbooks_filters.html).
 Run filter examples using:
 
 ```bash
-ansible-playbook examples.yaml --list-tags
+ansible-playbook filter-examples.yaml --list-tags
 
-ansible-playbook examples.yaml --tag create
-ansible-playbook examples.yaml --tag subset
-ansible-playbook examples.yaml --tag manipulate
-ansible-playbook examples.yaml --tag other
-ansible-playbook examples.yaml --tag regex
+ansible-playbook filter-examples.yaml --tag create
+ansible-playbook filter-examples.yaml --tag subset
+ansible-playbook filter-examples.yaml --tag manipulate
+ansible-playbook filter-examples.yaml --tag other
+ansible-playbook filter-examples.yaml --tag regex
 
-ansible-playbook examples.yaml --tag test
+ansible-playbook filter-examples.yaml --tag test
 ```
 
 ## Notes

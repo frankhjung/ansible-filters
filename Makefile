@@ -3,7 +3,7 @@
 .PHONY: all clean cleanall
 .SUFFIXES: .tex .pdf
 
-DOCS = filters
+DOCS = presentation
 TEXS = $(patsubst %, %.tex, $(DOCS))
 
 .tex.pdf:

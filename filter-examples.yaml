@@ -70,18 +70,9 @@
         debug:
           var: martin.name
 
-      - name: split name into a list
-        debug:
-          var: item
-        with_items: "{{ martin.name.split(' ') }}"
-
       - name: show job
         debug:
           var: martin.job
-
-      - name: change job to lowercase
-        debug:
-          msg: "{{ martin.job | lower }}"
 
       - name: list skills
         debug:
@@ -92,6 +83,15 @@
         debug:
           var: item
         with_items: "{{ martin.skills | sort(reverse=True) }}"
+
+      - name: split name into a list
+        debug:
+          var: item
+        with_items: "{{ martin.name.split(' ') }}"
+
+      - name: change job to lowercase
+        debug:
+          msg: "{{ martin.job | lower }}"
 
       - name: capitalize skills
         debug:
