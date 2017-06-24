@@ -1,6 +1,6 @@
 #!/usr/bin/env make
 
-.PHONY: all clean cleanall
+.PHONY: all clean cleanall run
 .SUFFIXES: .tex .pdf
 
 DOCS = presentation
@@ -20,3 +20,5 @@ clean:
 cleanall: clean
 	-latexmk -quiet -C $(TEXS)
 	@$(RM) *~ *.nav *.pyc *.snm *.vrb *.retry
+
+run: all

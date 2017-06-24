@@ -19,6 +19,38 @@ ansible-playbook filter-examples.yaml --tag regex
 ansible-playbook filter-examples.yaml --tag test
 ```
 
+## Pipe or Method Call?
+
+Jinja filters can be invoked using a method call:
+
+```
+- debug:
+    msg: "{{ martin.name.upper() }}" # jinja filter
+```
+
+```
+TASK [debug] *******************************************************************
+ok: [localhost] => {
+    "msg": "MARTIN D'VLOPER"
+}
+```
+
+This does not seem to work for Ansible filters, instead pipe:
+
+```
+- debug:
+    msg: "{{ martin.name | hash }}" # ansible filter
+```
+
+```
+TASK [debug] *******************************************************************
+ok: [localhost] => {
+    "msg": "77844c7c15c84f66aa6ada7c6e2761f4aecd52c0"
+}
+```
+
+
+
 ## Notes
 
 - [Ansible](http://docs.ansible.com/ansible/index.html)
