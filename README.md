@@ -5,7 +5,7 @@ filters](http://docs.ansible.com/ansible/playbooks_filters.html).
 
 ## Run the Example Playbook
 
-Run filter examples using:
+Run specific filter examples using associated tags:
 
 ```bash
 ansible-playbook filter-examples.yaml --list-tags
@@ -31,7 +31,9 @@ Presentation produced using Beamer LaTeX:
 - [Beamer](https://www.sharelatex.com/learn/Beamer)
 - [Transitions](https://math-linux.com/latex-26/article/how-to-make-a-presentation-with-latex-introduction-to-beamer)
 
-- Logo created from montage of images in figures directory using [ImageMagick](https://www.imagemagick.org/):
+Logo created from montage of images in figures directory using
+[ImageMagick](https://www.imagemagick.org/):
+
 ```bash
 montage ansible-logo.png thelinuxfoundation-logo.png acm-logo.png themarlogroup-logo.png -geometry 48x48 logos.png
 ```

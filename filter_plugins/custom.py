@@ -5,6 +5,6 @@ def count(word, char):
     return word.count(char)
 
 class FilterModule(object):
-    ''' Custom jinja2 filters. '''
+    ''' Custom Jinja2 filters. '''
     def filters(self):
         return {'count': count}

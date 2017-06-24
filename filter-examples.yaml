@@ -59,7 +59,7 @@
         debug:
           var: item
         with_items: "{{ martin.skills }}"
-        when: not item | match('perl') # same as item != 'perl'
+        when: not item | match('perl')
 
       tags: subset
 
@@ -131,8 +131,8 @@
           counter: "{{ martin.name | count('r') }}"
 
       - name: test there are exactly 2 occurrences
-        debug:
-          var: counter
-        failed_when: counter | int != 2
+        assert:
+          that: counter | int == 2
+          msg: "expect counter to be 2 got {{ counter }}"
 
       tags: test
