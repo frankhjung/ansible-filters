@@ -49,7 +49,7 @@
           var: item
         with_items: "{{ martin.skills }}"
 
-      - name: show skill starting with 'p'
+      - name: show skills starting with 'p'
         debug:
           var: item
         with_items: "{{ martin.skills }}"
@@ -70,6 +70,9 @@
         debug:
           var: martin.name
 
+      - debug:
+          msg: "{{ martin.name | list | length }}"
+
       - name: show job
         debug:
           var: martin.job
@@ -83,11 +86,6 @@
         debug:
           var: item
         with_items: "{{ martin.skills | sort(reverse=True) }}"
-
-      - name: split name into a list
-        debug:
-          var: item
-        with_items: "{{ martin.name.split(' ') }}"
 
       - name: change job to lowercase
         debug:
@@ -121,10 +119,20 @@
           content: "{{ martin | to_nice_yaml(indent=4) }}"
           dest: './martin.yaml'
 
+      - debug:
+          var: martin.name
+
+      - name: split name using python
+        debug:
+          msg: "{{ martin.name.split(' ') }}"
+
       tags: other
 
     # test filter plugin
     - block:
+
+      - debug:
+          var: martin.name
 
       - name: count number of occurrences of 'r' in name
         set_fact:

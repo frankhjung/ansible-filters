@@ -58,10 +58,21 @@ ok: [localhost] => {
 - [Jinja2](http://jinja.pocoo.org/docs/2.9/api/)
 - [Jinja2 Better Ansible Playbooks Templates](https://blog.codecentric.de/en/2014/08/jinja2-better-ansible-playbooks-templates/)
 
+### executed on Ansible controller
+
+This is done to minimize the requirements on the target (Jinja2 is only required
+on the controller) and to be able to pass the minimal information needed for the
+task, so the target machine does not need a copy of all the data that the
+controller has access to.
+
+## Presentation
+
 Presentation produced using Beamer LaTeX:
 
 - [Beamer](https://www.sharelatex.com/learn/Beamer)
 - [Transitions](https://math-linux.com/latex-26/article/how-to-make-a-presentation-with-latex-introduction-to-beamer)
+
+## Logo
 
 Logo created from montage of images in figures directory using
 [ImageMagick](https://www.imagemagick.org/):

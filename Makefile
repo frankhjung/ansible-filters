@@ -7,7 +7,7 @@ DOCS = presentation
 TEXS = $(patsubst %, %.tex, $(DOCS))
 
 .tex.pdf:
-	-latexmk -quiet -f -pdf $<
+	-latexmk -quiet -f -shell-escape -pdf $<
 
 tex := $(patsubst %.tex, %.pdf, $(TEXS))
 
@@ -19,6 +19,7 @@ clean:
 
 cleanall: clean
 	-latexmk -quiet -C $(TEXS)
-	@$(RM) *~ *.nav *.pyc *.snm *.vrb *.retry
+	@$(RM) *~ *.nav *.pyc *.pyg *.snm *.vrb *.retry
+	-rm -rf _minted-presentation
 
 run: all

@@ -6,14 +6,11 @@
   \setbeamertemplate{sections/subsections in toc}[ball unnumbered]  % others: circle ball square
 	\usepackage{graphicx}
   \graphicspath{ {figures/} }
-  \usepackage{listings}
-  \lstset{
-    basicstyle=\scriptsize\color{blue}\ttfamily,
-    frame=none,
-    columns=l,
-    tabsize=2,
-    showspaces=false,
-    showtabs=false
+  \usepackage{minted}
+  \setminted{
+    autogobble=true,
+    fontsize=\scriptsize,
+    style=borland,
   }
   \usepackage{array}
   \hypersetup{
@@ -53,7 +50,7 @@
     \item what are Ansible filters?
     \item some typical use cases
     \item getting help
-    \item how to roll my own?
+    \item how to roll your own?
   \end{itemize}
 \end{frame}
 
@@ -89,10 +86,6 @@
   \pause{}
   \setbeamercolor{alerted text}{fg=blue}
   \begin{enumerate}[<+-|alert@+>]
-    \item  sand boxed
-      \begin{itemize}[<+-|alert@+>]
-        \item so can be used to evaluate untrusted code
-      \end{itemize}
     \item they are executed on the Ansible controller
       \begin{itemize}[<+-|alert@+>]
         \item \textcolor{red}{\textbf{not}} on the task's target host
@@ -100,7 +93,11 @@
     \item Ansible ships with its own filters
       \begin{itemize}[<+-|alert@+>]
         \item or use standard filters from Jinja2
-        \item or write your own!
+        \item or you can write your own!
+      \end{itemize}
+    \item can be sandboxed
+      \begin{itemize}[<+-|alert@+>]
+        \item so can be used to evaluate untrusted code
       \end{itemize}
   \end{enumerate}
 \end{frame}
@@ -109,57 +106,58 @@
 
 \begin{frame}[t,fragile]{Typical Filter Use Cases}
   Use filters to manipulate local data \ldots \pause
-  \setbeamercolor{alerted text}{fg=blue}
+  % \setbeamercolor{alerted text}{fg=blue}
   \begin{itemize}
-    \item<+-|alert@+> create new facts
-      \only<2> {\lstinputlisting[firstline=34,lastline=36]{filter-examples.yaml}}
-    \item<+-|alert@+> subset or filter lists
-      \only<3> {\lstinputlisting[firstline=52,lastline=62]{filter-examples.yaml}}
-    \item<+-|alert@+> manipulate strings
-      \only<4> {\lstinputlisting[firstline=87,lastline=99]{filter-examples.yaml}}
+    \item<+-> create new facts
+      \only<2> {\inputminted[firstline=34,lastline=36]{yaml}{filter-examples.yaml}}
+    \item<+-> subset or filter lists
+      \only<3> {\inputminted[firstline=52,lastline=62]{yaml}{filter-examples.yaml}}
+    \item<+-> manipulate strings
+      \only<4> {\inputminted[firstline=85,lastline=97]{yaml}{filter-examples.yaml}}
   \end{itemize}
 \end{frame}
 
-\begin{frame}[t,fragile]{Method Call}
-  Python's \href{https://docs.python.org/2/library/string.html}{string
-  operations} can be called \ldots
+\begin{frame}[t,fragile]{Pipes}
+  Filters are piped \ldots
   \pause
-  \begin{lstlisting}
-- debug:
-    msg: "{{ martin.name.upper() }}"
-  \end{lstlisting}
+  \begin{minted}{yaml}
+    - debug:
+        msg: "{{ martin.name | lower }}"
+  \end{minted}
   \pause
   Which results in \ldots
-  \begin{lstlisting}
-TASK [debug] **************************************
-ok: [localhost] => {
-    "msg": "MARTIN D'VLOPER"
-}
-  \end{lstlisting}
-  This is the same as the Jinja's \texttt{upper} filter.
+  \begin{minted}{console}
+    TASK [debug] *******************************************************************
+    ok: [localhost] => {
+        "msg": "martin d'veloper"
+    }
+  \end{minted}
 \end{frame}
 
-\begin{frame}[t,fragile]{Pipe}
-  Filters however, require to be piped \ldots
+\begin{frame}[t,fragile]{Pipes}
+  Pipes can be chained \ldots
   \pause
-  \begin{lstlisting}
-- debug:
-    msg: "{{ martin.name | hash }}"
-  \end{lstlisting}
+  \begin{minted}{yaml}
+  - name: show name
+    debug:
+      var: martin.name
+
+  - debug:
+      msg: "{{ martin.name | list | length }}"
+  \end{minted}
   \pause
   Which results in \ldots
-  \begin{lstlisting}
-TASK [debug] **************************************
-ok: [localhost] => {
-    "msg": "77844c7c15c84f66aa6ada7c6e2761f4aecd52c0"
-}
-  \end{lstlisting}
-  \pause
-  Using a method call will fail with \ldots
-  \begin{lstlisting}[basicstyle=\scriptsize\color{red}\ttfamily]
-The error was: 'ansible.parsing.yaml.objects.AnsibleUnicode
-object' has no attribute 'hash'.
-  \end{lstlisting}
+  \begin{minted}{console}
+  TASK [show name] ***************************************************************
+  ok: [localhost] => {
+      "martin.name": "Martin D'veloper"
+  }
+
+  TASK [debug] *******************************************************************
+  ok: [localhost] => {
+      "msg": "16"
+  }
+  \end{minted}
 \end{frame}
 
 \section{Help}
@@ -167,19 +165,20 @@ object' has no attribute 'hash'.
 \begin{frame}[fragile]
   \frametitle{Getting help when things go wrong}
   New in Ansible 2.3 is {\color{blue} \verb type_debug }:
-  \begin{lstlisting}
-- name: type_debug var
-  debug:
-    msg: "{{ martin | type_debug }}"
-  \end{lstlisting}
   \pause
-  Gives variable type information \dots
-  \begin{lstlisting}
-TASK [type_debug var] *************************
-ok: [localhost] => {
-    "msg": "dict"
-}
-  \end{lstlisting}
+  \begin{minted}{yaml}
+  - name: type_debug var
+    debug:
+      msg: "{{ martin | type_debug }}"
+  \end{minted}
+  \pause
+  Which gives variable \textbf{type} information \dots
+  \begin{minted}{console}
+  TASK [type_debug var] *************************
+  ok: [localhost] => {
+      "msg": "dict"
+  }
+  \end{minted}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -196,30 +195,30 @@ ok: [localhost] => {
 \begin{frame}[t,fragile]
   \frametitle{Getting help when things go wrong}
   Read the source, for example Jinja has a sort method:
-  \begin{lstlisting}
+  \begin{minted}{python}
 def do_sort(environment, value, reverse=False,
             case_sensitive=False, attribute=None):
     """Sort an iterable.  Per default it sorts ascending,
     if you pass it true as first argument it will reverse
     the sorting.
     ...
-  \end{lstlisting}
+  \end{minted}
   \pause{}
   Where {\color{blue}\texttt{do\_sort}} maps to \ldots \pause {\color{blue}\texttt{sort}}:
-  \begin{lstlisting}
-FILTERS = {
-    'sort':                 do_sort,
-  ...
-}
-  \end{lstlisting}
+  \begin{minted}{python}
+  FILTERS = {
+      'sort':                 do_sort,
+        ...
+  }
+  \end{minted}
   \pause{}
-  Which gives a hint on how to use this method:
-  \begin{lstlisting}
-- name: sort skills
-  debug:
-    var: item
-  with_items: "{{ martin.skills | sort(reverse=True) }}"
-  \end{lstlisting}
+  Which gives a hint on how to use this filter:
+  \begin{minted}{yaml}
+  - name: sort skills
+    debug:
+      var: item
+    with_items: "{{ martin.skills | sort(reverse=True) }}"
+  \end{minted}
   \tiny \url{https://github.com/pallets/jinja/blob/master/jinja2/filters.py}
 \end{frame}
 
@@ -239,7 +238,10 @@ FILTERS = {
   \pause
   A better place to start is \ldots
   \begin{itemize}
-    \item \href{http://www.dasblinkenlichten.com/creating-ansible-filter-plugins/}{Creating your own Ansible filter plugins}
+    \item
+      \href{http://www.dasblinkenlichten.com/creating-ansible-filter-plugins/}{Creating
+      your own Ansible filter plugins} by \textit{Jon Langemak}
+      \scriptsize \url{http://www.dasblinkenlichten.com/creating-ansible-filter-plugins/}
   \end{itemize}
   \bigskip
   \pause
@@ -249,11 +251,12 @@ FILTERS = {
 \begin{frame}[t,fragile]
   \frametitle{Writing your own filter}
   The steps to create a custom filter are \ldots
+  \pause{}
   \setbeamercolor{alerted text}{fg=blue}
   \begin{itemize}[<+-|alert@+>]
     \item {write a test for your plugin}
     \item {create a directory called \color{blue}{\texttt{filter\_plugins}}}
-    \item {add a Python script into this directory, to this script \ldots}
+    \item {add a Python script into this directory}
       \begin{itemize}
         \item {add a function implementing your filter}
         \item {implement class \textcolor{blue}{\texttt{FilterModule}} overriding \textcolor{blue}{\texttt{filters}} method}
@@ -267,33 +270,56 @@ FILTERS = {
 \begin{frame}[t,fragile]
   \frametitle{Writing your own filter}
   Writing a custom filter in detail \ldots
-  \setbeamercolor{alerted text}{fg=blue}
+  \pause{}
   \begin{itemize}
-    \item<+-|alert@+> write a test for your plugin \texttt{filter-examples.yaml}
-      \begin{onlyenv}<1> % code inline to remove leading spaces
-        \begin{lstlisting}
-- name: count number of occurrences of 'r' in name
-  set_fact:
-    counter: "{{ martin.name | count('r') }}"
+    \item<+-> write a test for your plugin \texttt{filter\_examples.yaml}
+      \begin{onlyenv}<2>
+        \begin{minted}{yaml}
+          - name: count number of occurrences of 'r' in name
+            set_fact:
+              counter: "{{ martin.name | count('r') }}"
 
-- name: test there are exactly 2 occurrences
-  assert:
-    that: counter | int == 2
-    msg: "expect counter to be 2 got {{ counter }}"
-        \end{lstlisting}
+          - name: test there are exactly 2 occurrences
+            assert:
+              that: counter | int == 2
+              msg: "expect counter to be 2 got {{ counter }}"
+        \end{minted}
       \end{onlyenv}
-    \item<+-|alert@+> create a directory called \texttt{filter\_plugins}
-      \only<2> {\newline \lstinline{mkdir filter_plugins}}
-    \item<+-|alert@+> add a Python script into this directory, to this script \ldots
-      \only<3> {\newline \lstinline{touch filter_plugins/custom.py}}
+    \item<+-> create a directory called \texttt{filter\_plugins}
+      \only<3> {\mint{bash}|mkdir filter_plugins|}
+    \item<+-> add a Python script into this directory
+      \only<4> {\mint{bash}|edit filter_plugins/custom.py|}
       \begin{itemize}
-        \item<+-|alert@+> add a function implementing your filter
-          \only<4> {\lstinputlisting[firstline=3,lastline=5]{filter_plugins/custom.py}}
-        \item<+-|alert@+> implement class \texttt{FilterModule} overriding \texttt{filters} method
-          \only<5> {\lstinputlisting[firstline=7,lastline=10]{filter_plugins/custom.py}}
+        \item<+-> add a function implementing your filter
+          \only<5> {\inputminted[firstline=3,lastline=5]{python}{filter_plugins/custom.py}}
+        \item<+-> implement class \texttt{FilterModule} overriding \texttt{filters} method
+          \only<6> {\inputminted[firstline=7,lastline=10]{python}{filter_plugins/custom.py}}
       \end{itemize}
-    \item<+-|alert@+> run test of your new filter
+    \item<+-> run test of your new filter
+      \begin{onlyenv}<7>
+        \begin{minted}[fontsize=\tiny]{console}
+          TASK [debug] *******************************************************************
+          ok: [localhost] => {
+              "martin.name": "Martin D'veloper"
+          }
+
+          TASK [count number of occurrences of 'r' in name] ******************************
+          ok: [localhost]
+
+          TASK [test there are exactly 2 occurrences] ************************************
+          ok: [localhost] => {
+              "changed": false,
+              "msg": "All assertions passed"
+          }
+        \end{minted}
+      \end{onlyenv}
   \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Writing your own filter}
+  The full Python code for custom filter:
+  {\inputminted{python}{filter_plugins/custom.py}}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -450,6 +476,33 @@ FILTERS = {
 \end{frame}
 
 \section{Addenda}
+
+\begin{frame}[fragile]
+  \frametitle{Using Python String methods}
+  If the Ansible variable is of type string, then you can use Python's string
+  methods. For example:
+  \begin{minted}{yaml}
+    - name: split name using python
+      debug:
+        msg: "{{ martin.name.split(' ') }}"
+  \end{minted}
+  \pause{}
+  Which gives you back a list:
+  \begin{minted}[fontsize=\tiny]{console}
+    TASK [debug] *******************************************************************
+    ok: [localhost] => {
+        "martin.name": "Martin D'veloper"
+    }
+
+    TASK [split name using python] *************************************************
+    ok: [localhost] => {
+        "msg": [
+            "Martin",
+            "D'veloper"
+        ]
+    }
+  \end{minted}
+\end{frame}
 
 \begin{frame}
   \frametitle{Resources}
