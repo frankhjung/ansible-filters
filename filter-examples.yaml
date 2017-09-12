@@ -31,7 +31,7 @@
           var: item
         with_items: "{{ martin.skills }}"
 
-      - name: count skills
+      - name: count the items in martin.skills
         set_fact:
           skills_length: "{{ martin.skills | length }}"
 
@@ -103,7 +103,7 @@
 
         - name: search using regex named group
           debug:
-            msg: "{{ martin.url | regex_replace('.*/(?P<war>.+)$', '\\g<war>') }}"
+            msg: "{{ martin.url | regex_replace('.*/(?P<name>.+)$', '\\g<name>') }}"
 
         - name: search using regex numbered group
           debug:
@@ -114,7 +114,7 @@
     # other
     - block:
 
-      - name: write data structure to yaml
+      - name: write data structure to yaml file
         copy:
           content: "{{ martin | to_nice_yaml(indent=4) }}"
           dest: './martin.yaml'
@@ -144,3 +144,23 @@
           msg: "expect counter to be 2 got {{ counter }}"
 
       tags: test
+
+    # omit if parameter not provided
+    - block:
+
+      - set_fact:
+          emptyValue: ''
+          whiteSpace: '   '
+
+      - name: default result from debug on no msg or var
+        debug:
+
+      - name: omit if value is just whitespace
+        debug:
+          msg: "{{ whiteSpace | trim | default({}) or omit }}"
+
+      - name: omit if value is empty and not a number
+        debug:
+          msg: "{{ emptyValue | trim | int or omit }}"
+
+      tags: omit

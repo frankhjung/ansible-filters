@@ -105,6 +105,11 @@
 \section{Typical Use Cases}
 
 \begin{frame}[t,fragile]{Typical Filter Use Cases}
+  For the following pages I will use this example structure \ldots
+  \inputminted[firstline=5,lastline=14]{yaml}{filter-examples.yaml}
+\end{frame}
+
+\begin{frame}[t,fragile]{Typical Filter Use Cases}
   Use filters to manipulate local data \ldots \pause
   % \setbeamercolor{alerted text}{fg=blue}
   \begin{itemize}
@@ -261,7 +266,7 @@ def do_sort(environment, value, reverse=False,
         \item {add a function implementing your filter}
         \item {implement class \textcolor{blue}{\texttt{FilterModule}} overriding \textcolor{blue}{\texttt{filters}} method}
       \end{itemize}
-    \item {run test on your new filter}
+    \item {test your new filter}
   \end{itemize}
   \bigskip
   \only<7>{\textit{Now the code \ldots}}
@@ -295,7 +300,7 @@ def do_sort(environment, value, reverse=False,
         \item<+-> implement class \texttt{FilterModule} overriding \texttt{filters} method
           \only<6> {\inputminted[firstline=7,lastline=10]{python}{filter_plugins/custom.py}}
       \end{itemize}
-    \item<+-> run test of your new filter
+    \item<+-> test your new filter
       \begin{onlyenv}<7>
         \begin{minted}[fontsize=\tiny]{console}
           TASK [debug] *******************************************************************
