@@ -18,7 +18,7 @@ clean:
 	@$(RM) $(patsubst %.tex, %.*.*, $(TEXS))
 
 cleanall: clean
-	-latexmk -quiet -C $(TEXS)
+	# -latexmk -quiet -C $(TEXS)
 	@$(RM) *~ *.nav *.pyc *.pyg *.snm *.vrb *.retry
 	-rm -rf _minted-presentation
 
