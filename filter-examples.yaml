@@ -164,3 +164,26 @@
           msg: "{{ emptyValue | trim | int or omit }}"
 
       tags: omit
+
+    # can a numeric methods be called?
+    - block:
+
+      - set_fact:
+          number: -13
+
+      - name: test if numeric
+        debug:
+          msg: "{{ number | int or omit }}"
+
+      - name: test value
+        assert:
+          that: number | int == -13
+          msg: "expect number of -13 got {{ number }}"
+
+      - name: test method
+        assert:
+          that: number | abs == 13
+          msg: "expect number of 13 got {{ number | abs }}"
+
+      tags: numerics
+
