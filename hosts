@@ -8,4 +8,4 @@
 #   - You can enter hostnames or ip addresses
 #   - A hostname/ip can be a member of multiple groups
 
-localhost   ansible_connection=local
+localhost   ansible_connection=local ansible_python_interpreter=/usr/bin/python3

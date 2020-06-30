@@ -52,14 +52,14 @@
       - name: show skills starting with 'p'
         debug:
           var: item
-        with_items: "{{ martin.skills }}"
-        when: item | match('p.*')
+        when: item is match('p.*')
+        loop: "{{ martin.skills }}"
 
       - name: show skills except 'perl'
         debug:
           var: item
-        with_items: "{{ martin.skills }}"
-        when: not item | match('perl')
+        when: not item is match('perl')
+        loop: "{{ martin.skills }}"
 
       tags: subset
 
@@ -117,7 +117,7 @@
       - name: write data structure to yaml file
         copy:
           content: "{{ martin | to_nice_yaml(indent=4) }}"
-          dest: './martin.yaml'
+          dest: 'files/martin.yaml'
 
       - debug:
           var: martin.name
@@ -163,9 +163,21 @@
         debug:
           msg: "{{ emptyValue | trim | int or omit }}"
 
+      - name: test if empty
+        assert:
+          that: not emptyValue
+          success_msg: variable is empty
+          fail_msg: expected empty variable
+
+      - name: test if not empty
+        assert:
+          that: not whiteSpace | bool
+          success_msg: variable is not empty
+          fail_msg: expected non-empty variable
+
       tags: omit
 
-    # can a numeric methods be called?
+    # numerics
     - block:
 
       - set_fact:
@@ -187,3 +199,27 @@
 
       tags: numerics
 
+    # environment variables
+    - block:
+
+      - name: get home from environment
+        set_fact:
+          temp_home: "{{ lookup('env','HOME') }}"
+
+      - name: check home exists
+        assert:
+          that: temp_home is defined
+          success_msg: home exists and is "{{ temp_home }}"
+          fail_msg: expected home in environment
+
+      - name: get non-existent variable from environment
+        set_fact:
+          temp_xyz: "{{ lookup('env','XYZ') }}"
+
+      - name: check XYZ does not exist
+        assert:
+          that: not temp_xyz is defined or not temp_xyz
+          success_msg: temp_xyz does not exist or is empty
+          fail_msg: unexpected value for "{{ temp_xyz }}"
+
+      tags: env
