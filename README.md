@@ -1,7 +1,7 @@
 # Ansible Filters: a short introduction
 
 A introductory presentation (~20 minutes) on [Ansible
-filters](http://docs.ansible.com/ansible/playbooks_filters.html).
+filters](https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html).
 
 ## Run the Example Playbook
 
